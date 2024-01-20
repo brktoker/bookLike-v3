@@ -1,0 +1,62 @@
+{
+  "users": [
+    {
+      "username": "username",
+      "fullname": "fullname",
+      "password": "3448b6539c2adec0144b40f4aa7c938af872ddac",
+      "id": 2,
+      "likes": [
+        1
+      ],
+      "bookmarks": [
+        1
+      ]
+    }
+  ],
+  "bookmarks": [
+    {
+      "title": "Vue Document",
+      "url": "https://vuejs.org/",
+      "categoryId": 1,
+      "comment": "Beautiful framework in the world.",
+      "userId": 2,
+      "created_at": "2024-01-06T12:15:38.822Z",
+      "id": 1
+    },
+    {
+      "title": "GO Lang",
+      "url": "https://go.dev/",
+      "categoryId": 4,
+      "comment": "Go lang document",
+      "userId": 3,
+      "created_at": "2024-01-09T11:06:55.147Z",
+      "id": 14
+    }
+  ],
+  "categories": [
+    {
+      "name": "Vue.js",
+      "id": 1
+    },
+    {
+      "name": "React.js",
+      "id": 2
+    },
+    {
+      "name": "Frontend",
+      "id": 3
+    },
+    {
+      "name": "Backend",
+      "id": 4
+    },
+    {
+      "name": "Cloud",
+      "id": 5
+    },
+    {
+      "name": "Social Life",
+      "id": 6
+    }
+  ]
+}
