@@ -22,7 +22,7 @@ yarn lint
 
 ### Use Fake DB
 ```
-json-server --watch db.json
+json-server --watch db.json || yarn fakeDB
 ```
 
 ### Compiles Server side
