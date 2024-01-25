@@ -8,7 +8,11 @@
         >{{ item.title }}</a
       >
       <div class="flex items-center justify-center mt-2 gap-x-1">
-        <button @click="likeItem" class="like-btn group" :class="isLiked">
+        <button
+          @click="likeItem"
+          class="like-btn group"
+          :class="{ 'bookmark-item-liked': isLiked }"
+        >
           <svg
             xmlns="http://www.w3.org/2000/svg"
             class="fill-current group-hover:text-white"
@@ -25,7 +29,7 @@
         <button
           @click="bookmarkItem"
           class="bookmark-btn group"
-          :class="isBookmarked"
+          :class="{ 'bookmark-item-active': isBookmarked }"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -74,82 +78,80 @@
   </div>
 </template>
 
-<script>
-import { mapGetters } from "vuex";
-export default {
-  data() {
-    return {};
-  },
-  props: {
-    item: {
-      type: Object,
-      required: true,
-      default: () => {},
-    },
-  },
-  methods: {
-    likeItem() {
-      if (this._userLikes.indexOf(this.item.id) == -1) {
-        const userLikes = [...this._userLikes, this.item.id];
+<script setup>
+import { computed, inject } from "vue";
+import { useRouter } from "vue-router";
+import { useStore } from "vuex";
 
-        this.$axios
-          .patch(`/users/${this._getCurrentUser.id}`, { likes: userLikes })
-          .then((res) => {
-            this.$store.commit("setUserLikes", userLikes);
-          });
-      } else {
-        const index = this._userLikes.findIndex((i) => i === this.item.id);
-        if (index != undefined) {
-          let userLikes = [...this._userLikes];
-          const removedLikes = userLikes.splice(index, 1);
-          this.$axios
-            .patch(`/users/${this._getCurrentUser.id}`, { likes: removedLikes })
-            .then((res) => {
-              this.$store.commit("setUserLikes", userLikes);
-            });
-        }
-      }
-    },
-    bookmarkItem() {
-      if (this._userBookmarks.indexOf(this.item.id) == -1) {
-        const userBookmarks = [...this._userBookmarks, this.item.id];
+const $axios = inject("appAxios");
+const $router = useRouter();
+const $store = useStore();
 
-        this.$axios
-          .patch(`/users/${this._getCurrentUser.id}`, {
-            bookmarks: userBookmarks,
-          })
-          .then((res) => {
-            this.$store.commit("setUserBookmarks", userBookmarks);
-          });
-      } else {
-        const index = this._userBookmarks.findIndex((i) => i === this.item.id);
-        if (index != undefined) {
-          const removedLikes = this._userBookmarks.filter(
-            (b) => b !== this.item.id
-          );
-          this.$axios
-            .patch(`/users/${this._getCurrentUser.id}`, {
-              bookmarks: removedLikes,
-            })
-            .then((res) => {
-              this.$store.commit("setUserBookmarks", removedLikes);
-            });
-        }
-      }
-    },
+const props = defineProps({
+  item: {
+    type: Object,
+    required: true,
+    default: () => {},
   },
-  computed: {
-    ...mapGetters(["_getCurrentUser", "_userLikes", "_userBookmarks"]),
-    isLiked() {
-      return {
-        "bookmark-item-liked": this._userLikes?.indexOf(this.item.id) > -1,
-      };
-    },
-    isBookmarked() {
-      return {
-        "bookmark-item-active": this._userBookmarks?.indexOf(this.item.id) > -1,
-      };
-    },
-  },
+});
+
+const _getCurrentUser = computed(() => $store.getters._getCurrentUser);
+const _userLikes = computed(() => $store.getters._userLikes);
+const _userBookmarks = computed(() => $store.getters._userBookmarks);
+const isLiked = computed(
+  () => $store.getters?._userLikes?.indexOf(props.item.id) > -1
+);
+const isBookmarked = computed(
+  () => $store.getters?._userBookmarks?.indexOf(props.item.id) > -1
+);
+
+const likeItem = () => {
+  if (_userLikes.value?.indexOf(props.item.id) == -1) {
+    const userLikes = [..._userLikes.value, props.item.id];
+
+    $axios
+      .patch(`/users/${_getCurrentUser.value?.id}`, { likes: userLikes })
+      .then((res) => {
+        $store.commit("setUserLikes", userLikes);
+      });
+  } else {
+    const index = _userLikes.value?.findIndex((i) => i === props.item.id);
+    if (index != undefined) {
+      let userLikes = [..._userLikes.value];
+      const removedLikes = userLikes.splice(index, 1);
+      $axios
+        .patch(`/users/${_getCurrentUser.value?.id}`, { likes: removedLikes })
+        .then((res) => {
+          $store.commit("setUserLikes", userLikes);
+        });
+    }
+  }
+};
+const bookmarkItem = () => {
+  if (_userBookmarks.value.indexOf(props.item.id) == -1) {
+    const userBookmarks = [..._userBookmarks.value, props.item.id];
+
+    $axios
+      .patch(`/users/${_getCurrentUser.value?.id}`, {
+        bookmarks: userBookmarks,
+      })
+      .then((res) => {
+        $store.commit("setUserBookmarks", userBookmarks);
+      });
+  } else {
+    const index = _userBookmarks.value?.findIndex((i) => i === props.item.id);
+    if (index != undefined) {
+      const removedLikes = _userBookmarks.value?.filter(
+        (b) => b !== props.item.id
+      );
+      $axios
+        .patch(`/users/${_getCurrentUser.value?.id}`, {
+          bookmarks: removedLikes,
+        })
+        .then((res) => {
+          $store.commit("setUserBookmarks", removedLikes);
+        });
+    }
+  }
 };
 </script>

@@ -31,45 +31,39 @@
   </div>
 </template>
 
-<script>
+<script setup>
 import CryptoJs from "crypto-js";
-export default {
-  data() {
-    return {
-      userData: {
-        username: null,
-        fullname: null,
-        password: null,
-      },
-    };
-  },
-  computed: {
-    isUserValidation() {
-      return (
-        this.userData.username != null &&
-        this.userData.fullname != null &&
-        this.userData.password != null
-      );
-    },
-  },
-  methods: {
-    register() {
-      if (this.isUserValidation) {
-        const key = "booklike1234!";
-        const password = CryptoJs.HmacSHA1(
-          this.userData.password,
-          key
-        ).toString();
-        this.$axios
-          .post("/users", { ...this.userData, password })
-          .then((res) => {
-            this.$store.commit("setUser", res?.data[0]);
-            this.$router.replace("/");
-          });
-      } else {
-        alert("Please Fill all nessesary inputs");
-      }
-    },
-  },
+import { computed, inject, ref } from "vue";
+import { useRouter } from "vue-router";
+import { useStore } from "vuex";
+const $axios = inject("appAxios");
+const $store = useStore();
+const $router = useRouter();
+
+const userData = ref({
+  username: null,
+  fullname: null,
+  password: null,
+});
+
+const isUserValidation = computed(() => {
+  return (
+    userData.value.username != null &&
+    userData.value.fullname != null &&
+    userData.value.password != null
+  );
+});
+
+const register = () => {
+  if (isUserValidation) {
+    const key = "booklike1234!";
+    const password = CryptoJs.HmacSHA1(userData.value.password, key).toString();
+    $axios.post("/users", { ...userData.value, password }).then((res) => {
+      $store.commit("setUser", res?.data[0]);
+      $router.replace("/");
+    });
+  } else {
+    alert("Please Fill all nessesary inputs");
+  }
 };
 </script>

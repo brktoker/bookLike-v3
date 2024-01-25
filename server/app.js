@@ -14,12 +14,12 @@ const io = socketio(server, {
 });
 
 server.listen(PORT, () => {
-//   console.log(`Server Listening ${PORT} PORT ...`);
+  console.log(`Server Listening ${PORT} PORT ...`);
 
   io.on("connection", (socket) => {
     socket.emit("welcome_message", `Socket Listening ${PORT} PORT ...`);
-    socket.on("NEW_BOOKMARK_EVENT", bookmark => {
-        socket.broadcast.emit("NEW_BOOKMARK_ADDED", bookmark);
-    })
+    socket.on("NEW_BOOKMARK_EVENT", (bookmark) => {
+      socket.broadcast.emit("NEW_BOOKMARK_ADDED", bookmark);
+    });
   });
 });

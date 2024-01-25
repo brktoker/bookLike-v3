@@ -15,56 +15,52 @@
     />
     <button @click="login" class="default-button">Sign In</button>
     <span class="text-center mt-3 text-sm">
-      I have not a account. 
+      I have not a account.
       <router-link
         :to="{ name: 'RegisterPage' }"
         class="text-red-900 hover:text-black"
       >
-      Please Sign Up!</router-link
+        Please Sign Up!</router-link
       >
     </span>
   </div>
 </template>
 
-<script>
+<script setup>
 import CryptoJs from "crypto-js";
-export default {
-  data() {
-    return {
-      userData: {
-        username: null,
-        password: null,
-      },
-    };
-  },
-  computed: {
-    isUserValidation() {
-      return this.userData.username != null && this.userData.password != null;
-    },
-  },
-  methods: {
-    login() {
-      if (this.isUserValidation) {
-        const key = "booklike1234!";
-        const password = CryptoJs.HmacSHA1(
-          this.userData.password,
-          key
-        ).toString();
+import { computed, inject, ref } from "vue";
+import { useRouter } from "vue-router";
+import { useStore } from "vuex";
+const userData = ref({
+  username: null,
+  password: null,
+});
 
-        this.$axios
-          .get(`/users?username=${this.userData.username}&${password}`)
-          .then((res) => {
-            if(res?.data?.length > 0){
-              this.$store.commit("setUser",res?.data[0])
-              this.$router.replace("/")
-            } else {
-              alert("This user not found on the system")
-            }
-          });
-      } else {
-        alert("Please Fill all nessesary inputs")
-      }
-    },
-  },
+const $axios = inject("appAxios");
+const $store = useStore();
+const $router = useRouter();
+
+const isUserValidation = computed(() => {
+  return userData.value.username != null && userData.value.password != null;
+});
+
+const login = () => {
+  if (isUserValidation) {
+    const key = "booklike1234!";
+    const password = CryptoJs.HmacSHA1(userData.value.password, key).toString();
+
+    $axios
+      .get(`/users?username=${userData.value.username}&${password}`)
+      .then((res) => {
+        if (res?.data?.length > 0) {
+          $store.commit("setUser", res?.data[0]);
+          $router.replace("/");
+        } else {
+          alert("This user not found on the system");
+        }
+      });
+  } else {
+    alert("Please Fill all nessesary inputs");
+  }
 };
 </script>

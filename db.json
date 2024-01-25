@@ -11,6 +11,12 @@
       "bookmarks": [
         1
       ]
+    },
+    {
+      "username": "burak",
+      "fullname": "burak toker",
+      "password": "9c0da3d8f84e038ba714d1a0477003be8d403a9a",
+      "id": 3
     }
   ],
   "bookmarks": [
@@ -31,6 +37,15 @@
       "userId": 3,
       "created_at": "2024-01-09T11:06:55.147Z",
       "id": 14
+    },
+    {
+      "title": "bookmark",
+      "url": "url",
+      "categoryId": 6,
+      "comment": "bookmark",
+      "userId": 2,
+      "created_at": "2024-01-25T11:19:08.451Z",
+      "id": 15
     }
   ],
   "categories": [
